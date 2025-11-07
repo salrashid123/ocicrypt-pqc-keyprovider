@@ -1,0 +1,7 @@
+{
+  "key-providers": {
+    "grpc-keyprovider": {
+      "grpc": "localhost:50051"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "key-providers": {
+    "pqccrypt": {
+      "cmd": {
+        "path": "/tmp/pqc_oci_crypt",
+        "args": [   
+          "--pqcURI","pqc://pq?pub=$PQPUB",
+          "--adc", "$GOOGLE_APPLICATION_CREDENTIALS",          
+          "--pqcKeyURI", "pqc://pq?key=gcpkms://projects/$PROJECT_ID/locations/global/keyRings/kem_kr/cryptoKeys/kem_key_1/cryptoKeyVersions/1"            
+        ]
+      }
+    }
+  }
+}
