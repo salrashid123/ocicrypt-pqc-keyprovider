@@ -2,9 +2,7 @@
 
 Basic [OCICrypt KeyProvider](https://github.com/containers/ocicrypt/blob/main/docs/keyprovider.md) for post quantum cryptography (PQC)
 
-This repo includes a prebuilt and customizeable keyprovider which can be used to encrypt OCI Containers.
-
-[OCICrypt](https://github.com/containers/ocicrypt) includes specifications to encrypt an OCI Container image and within that, the keyprovider protocol allows wrapping of the actual key used to encrypt the layer to an external binary.
+This repo includes a prebuilt and customizeable keyprovider which can be used to encrypt OCI Containers using `MLKEM`
 
 The binary in this question accepts a keyprovider request and inturn wraps the layer symmetric encryption key using a hosted KMS key.
 
@@ -16,9 +14,13 @@ The private key can be either based off of
 
 or
 
-* a key on a `KM`S system (eg, [GCP KMS](https://docs.cloud.google.com/kms/docs/key-encapsulation-mechanisms))
+* a key on a `KMS` system (eg, [GCP KMS](https://docs.cloud.google.com/kms/docs/key-encapsulation-mechanisms))
 
 This sample is based off of the [simple-oci-keyprovider](https://github.com/lumjjb/simple-ocicrypt-keyprovider.git) repo which demonstrates the protocol involved.
+
+For background:
+
+[OCICrypt](https://github.com/containers/ocicrypt) includes specifications to encrypt an OCI Container image and within that, the keyprovider protocol allows wrapping of the actual key used to encrypt the layer to an external binary.
 
 For more information, see 
 
@@ -153,6 +155,149 @@ The last layer on the image shjould be encrypted
 skopeo inspect docker://registry.domain.com:5000/app:encrypted
 ```
 
+shows the encrypted later (in this case we asked for just the last one)
+
+```json
+{
+    "Name": "registry.domain.com:5000/app",
+    "Digest": "sha256:d93d467441e964b91e99b0669a1c5ef6d8b6a5ecb766973e917ab239557b4380",
+    "RepoTags": [
+        "encrypted",
+        "decrypted"
+    ],
+    "Created": "2025-11-10T00:21:47.071537879-05:00",
+    "DockerVersion": "",
+    "Labels": null,
+    "Architecture": "amd64",
+    "Os": "linux",
+    "Layers": [
+        "sha256:dd5ad9c9c29f04b41a0155c720cf5ccab28ef6d353f1fe17a06c579c70054f0a",
+        "sha256:960043b8858c3c30f1d79dcc49adb2804fd35c2510729e67685b298b2ca746b7",
+        "sha256:b4ca4c215f483111b64ec6919f1659ff475d7080a649d6acd78a6ade562a4a63",
+        "sha256:eebb06941f3e57b2e40a0e9cbd798dacef9b04d89ebaa8896be5f17c976f8666",
+        "sha256:02cd68c0cbf64abe9738767877756b33f50fff5d88583fdc74b66beffa77694b",
+        "sha256:d3c894b5b2b0fa857549aeb6cbc38b038b5b2828736be37b6d9fff0b886f12fd",
+        "sha256:b40161cd83fc5d470d6abe50e87aa288481b6b89137012881d74187cfbf9f502",
+        "sha256:46ba3f23f1d3fb1440deeb279716e4377e79e61736ec2227270349b9618a0fdd",
+        "sha256:4fa131a1b726b2d6468d461e7d8867a2157d5671f712461d8abd126155fdf9ce",
+        "sha256:01f38fc88b34d9f2e43240819dd06c8b126eae8a90621c1f2bc5042fed2b010a",
+        "sha256:50891eb6c2e685b267299b99d8254e5b0f30bb7756ee2813f187a29a0a377247",
+        "sha256:c4cd914051cf67617ae54951117708987cc63ce15f1139dee59abf80c198b74e",
+        "sha256:7c5d5f1dfb7e1c39132605bc675f7468ba224d1e2e408b127d868771389f382f"
+    ],
+    "LayersData": [
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:dd5ad9c9c29f04b41a0155c720cf5ccab28ef6d353f1fe17a06c579c70054f0a",
+            "Size": 83932,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:960043b8858c3c30f1d79dcc49adb2804fd35c2510729e67685b298b2ca746b7",
+            "Size": 20322,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:b4ca4c215f483111b64ec6919f1659ff475d7080a649d6acd78a6ade562a4a63",
+            "Size": 599551,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:eebb06941f3e57b2e40a0e9cbd798dacef9b04d89ebaa8896be5f17c976f8666",
+            "Size": 284,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:02cd68c0cbf64abe9738767877756b33f50fff5d88583fdc74b66beffa77694b",
+            "Size": 188,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:d3c894b5b2b0fa857549aeb6cbc38b038b5b2828736be37b6d9fff0b886f12fd",
+            "Size": 112,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:b40161cd83fc5d470d6abe50e87aa288481b6b89137012881d74187cfbf9f502",
+            "Size": 382,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:46ba3f23f1d3fb1440deeb279716e4377e79e61736ec2227270349b9618a0fdd",
+            "Size": 345,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:4fa131a1b726b2d6468d461e7d8867a2157d5671f712461d8abd126155fdf9ce",
+            "Size": 122108,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:01f38fc88b34d9f2e43240819dd06c8b126eae8a90621c1f2bc5042fed2b010a",
+            "Size": 5209711,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:50891eb6c2e685b267299b99d8254e5b0f30bb7756ee2813f187a29a0a377247",
+            "Size": 1889065,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:c4cd914051cf67617ae54951117708987cc63ce15f1139dee59abf80c198b74e",
+            "Size": 921781,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip+encrypted",
+            "Digest": "sha256:7c5d5f1dfb7e1c39132605bc675f7468ba224d1e2e408b127d868771389f382f",
+            "Size": 4155577,
+            "Annotations": {
+                "org.opencontainers.image.enc.keys.provider.pqccrypt": "eyJrZXlfdXJsIjoicHFjOi8vcHE/cHViPUxTMHRMUzFDUlVkSlRpQlFWVUpNU1VNZ1MwVlpMUzB0TFMwS1RVbEpSWE5xUVV4Q1oyeG5hR3RuUWxwUlRVVkNRVWxFWjJkVGFFRk1jbUZNVVU5YWVXOUdha3MzY2tSbE1XSXdRV1F5Tm14bE1rUkRVelJoVFU5amN3cGxjRlJ3UTBnMGVtNXVWRlZFY0NzM2IzbEliRWRLYVVsa1NrWlVTMjl5U25SRWRXaEpUREJDYzNCaVdHUmpUMGQ2ZVRGalRsUTNha2c0VWxST2RDOUJDbmx5ZFdKT1p6aEtTM1pRU0VSc2QzSnhielpoZDI5WFlsSXdabFJ2YVdNMmEzcFVia2d2YWpGSk16UnJhV3BoYVZCTVIycFNUVnBMZVZkTFVtTmFSVGdLVkZCcWFsbG1UMXBaYkhKVWMxb3JSMmxsTnpKTlR6QTJkRzlwTkVwQlFUWllkbU55YTNGcmVsTnViMWxPZHpsc1JVOXFOMWxRTVd4U1kydHNRWFJFYXdwRVoxb3plRGgwUkVGMVdHeGxjRXBWZFVreVIxRXlkSHB3ZEdsVlkwTkRVMlpyY0Rodk4zZGhlbTFOVmxOQlkwZDViRmh2U1RGVWIwaHRRMWRSWW00MENrbzJZVWhIVkVaYVRHTXdaM3BuT1V0bldVWllRbEZqTUZCS2FtRnBVMHBSZW1VNFJuTm1kMnhCYlZaS2JFRkhVbTV2THpGUVRqWnVjV3BZVVVoa1dtZ0tTa3BHZVZkT1NqaE9Ua05YUWxOWldsbHVRVmQxWlhZMmVXSTVlVzFVU2tWTFREZFVkR0ZOV0U5SlFrbDZOazk2ZVZoVlNHMVFkREpUVm1WeVNtaHliQXBQTlUxNmNuWmtOMGRsTlZWbU9FWlNValJEWVhGbllXeDNUM2MxYVdac04wUkRhalpyWjNsdmJXWTVXR2Q0VWpaVVRIVnpVMHRvVVhGNWJEWlFiekZhQ25ocVVsWlpNREk0WnpJck1GQTNSMjU1YTNrMlowSmFWbnBuZFZkNVVVTnpUREZEVFVWWVEwRlhZamRaWlhkWWFHTnBUMmRtY1VNMlFUY3JZa2N6TXpVS2RrVlVOa28xY0RCSWFqQkRWalZEV2xsT2JXTnJNako2WVZneFJGUnRjbTlPYTFkTFNYRjNibTlIYUhkV1REQlNUVk40YVUwNFVIZEtaMW8zWW10aGNBcE1TakZZV1ZRM2JsbEZjbUZqYVdaTGNsWnhWMngwV2paMU5ESlJZMjVNYUZrd2QyeDRiemszVlVsbFZIWTVTVXBTWTNaeFJHVk1ZazFFYjNsWFRWZFdDbUkyTlZaTGVuQlVTbXB1VEdSeU5VTjNVMlJHYTJkRFdIQnlXVEZVYVhOWlZXdDJjMjExZFZaeVIxY3lSa3RxVFVwclpubG1kWFJoUnpaVmEweHNVMkVLWm5OcmIyNTBUMHRKSzNadlNVTnRiVXRoV0hwVEswdFRUazByV1ZreVNIQm9UbVZyUWlzMk0zWXdWMDFPZEVwaFUyWjFRMjByVW5wQ2JUSkxhRlU1YXdwdmFqaHVTSEJ1UkVwUkx6WklXR2x3VG1KMFdWcEdORVpKSzFoaFdDdGlRbGRRWTFOSVoyaEVlRkZPUTBOYVZrbHBRM1E0VVVGdVozYzFWMk53TkZwTENtRnJVR05qVkVOaVRUTlNkMjVPVjJod2F6ZDVVU3RpVFVnNU4zTkRUelZHVjBFemJrWlhiVzF0TkV0U1JITk9jWHBRVldOMllscG5ibWQ1Y1ZOV1psRUtTVWRDU0V0dGNsaE1iVWhxYjNneWNWSlNTMnB6TUN0Q2VXSXlOMlZRUzNGdVluQk5VVUp1V2sxWmEzcGhXVGM0VUdJck5ubHJVREJxWmt3eGRVcDZRZ3BVWWsxUmQxSk9WRXRXWVdOTU4zWkxSMlF6YUZCdFl6UnVNVWRGVEZGV1ZrcElRVFo0VWtsd2VtaEpSbWQxWnpCbk4xZFlTamMyYm14c1YxTlFjR1pUQ25oa1FVVXdTbWhvU1ZneE4xa3hVbnBUWkdsM1JGUndPRXhXY2pWTk9UbFhRM0ZIVTIxcE0yNVRWa3N6ZGtoRlNsQlFSVVZGUjJvMFVFUlJTbXg1TUhJS1NYVkxiRlJwVEd0VVMwUk1SbWxEWjBVNFNXaEtMMDk1U0hCV1NGSnhUM2QxWjBWRlFuRm5jVzlxYlRWNFYydGlaVUpJTlU5R2RXcHFjME5FVmtKdFFncExibmsxUWtrNFkzWTJVR2xLU0VSR1ZIRlBObE14WjBWbmNVNVRUamRyTTNwMVMyZE1PRmN5YkhKTlNGbGpOMjFIYnpOTWJsQkRXVlpuYVdOak1VVk5Da2xJVERWd2JVcGphamwyVVhWbGJFVnVZMk55V0dwTVEyazBkV05IZDBOSVFYUlVVVXgzVUdsc2N6bEZXV3RxV0ZsUmFISlNURWRLWm1zM1VsQTVla1FLZUVscWNteFZia2hOZG5KQ2IxbGhZbFZwYjBaQlMyOVNhVlF4ZVZVMGJUWjBkekZWVVhwNGNrSmtWRGhDWjNCSlJXTXJWV0ZaVDB0RlkyWjZlVEZST0FwTWNITlNUVXhXVVVkdVUwVm5ZMDAyWWpsUU1rbFRWSHBrVnpGTlFqZHpXbk5PZEZSUE1tUkRVMlJqVVVGT1owZG9kMUJ6ZG1SU1VYbHZVREZXWkRrMkNrMVFkbXBGVVZGcmF5OVpOV1JwV0c1WWVtdDRlbGhaTjBjeE9FRldTVGQ1YWs5amFFVTFUWGRyV0VGd1ZISTFXSFZFWlVkMVJqUkJVelp2UjFaaVoyNEtaMWRoVFZGV01sTkVTMDFZYlRCS2EwTkxOR2RMUjBacWJFZ3hVMVJQVUV0aFVFSm5XVnBGYjFOVFVVVlVhRVJEYVVaVmNIUnBjMVZFZGpsWmMzaE9hd3BYVm05T1VWRk1SZ290TFMwdExVVk9SQ0JRVlVKTVNVTWdTMFZaTFMwdExTMD0iLCJ3cmFwcGVkX2tleSI6ImV5SmphWEJvWlhKMFpYaDBJam9pTm1WUEwweGxPRVp1UnpsbWRHdGlNMUl2ZG05UFVubGFVbFUyZG1Ka1lqQmxkRlZIUldWSGFrcG1heXRpWkdSR2J6bEdZWGRwTUVsdE9ETndiSGcwTWsxSk1Ea3JOMGt5VVcxdmFqWXZNeXR6UzNWTVkxRkZOVlp1UW0xNVRYY3dSV2hqTHpCcVpuZDRiMll3ZFhKSldGUnZhamw1UldsdFdHUk1VMUUxVFVneWJIWlhiRVJuY25CMllVdzJUekJWZUV0WlZTdEdVMGRCUVRVNGEyeHRaRU5uZFhwblpXUnVNbVpaUzBNemJYWldkamxwT1hGRVFVRllkM1ZyV1dGdE9UZFBZelJqV0RaT2NHSnBPRlo1ZUZkR1FsWXdNVU4zVWl0bFJWbzFlVmhzYUZCUVNtWmpkelpYTkRWSFVFSXJUalp3Y2twRFlpOWxRWHBFTTNnMmIycFhkVXhCVlVJemEybHpaM2g2VldSamFFdG9ZVmN5UXpsdWNGQnBPRU5oTldKRUwwVmhUVDBpTENKclpYbEpibVp2SWpwN0ltMWxZMmhoYm1semJTSTZJakVpTENKM2NtRndjR1ZrUzJWNUlqb2laWGxLTWxwWVNucGhWemwxU1dwdmVreERTakJsV0VKc1NXcHZhV0pYZUdaaE1sWjBXSHBqTWs5RFNYTkpiWFJzWWxWT2NHTkhhR3hqYkZKc1pVaFJhVTlwU2xaYU0zQnBZMWhWTlZwVlZYcFdWa293WXpKYWRsWklSbmxXYTNReVdrZEZNR0ZyY0haTWVtaHhUVE5HTTJSRlozZFRhMVYyVGpOd2Jrc3dUbk5aYm1SelRXczFRMWxzVmpWaWFteFVaVWhDUjFSWGVGcFNha3A0V1hwS2FFNVZXWGhTVldSelZXeHNSRlpFVmpaaVZVNUVZakowVEUxVmJHaFVlVGwzVEhwa1IxSkVSalJOVkVFeFdUQmFORmxXVmpWWFZrcGhWbXByZGs1VVVsQmhWMDV0VkZkd1ZVNHhXa3hXV0VKRVYyNXNkV1JIVWpWT1Iyc3pUbmwwY2xGdVFsQk9hbXhxVTBaR05GTnRlRlpTVm5BMVltMW5NRlJzUVRCalIxcFhXbFpPZFUxRlRqSk9NRkkwV2pCd2QxTnVWVE5YUkdoUVUxTTVVRlJITVVsaU1qUTFVMjA1YVZkRE9VdGpNV3hXWVVScmNtVlZPVU5rTVZJeVdWVjNkbHBXWnpCa1JFSktVekpTVFV3d1drTlhWMUV5WTBkc2JGRlZNVlphTVc4ellUQTRlVXQ2UWxaaE1VNUZZako0YmxGdE9UVmlVemx0Vm5wc1VHUXlaRU5oYW1oeFZsaHNNbFZHVG1sUlZUVjRaR3hTYVZNd1RsbFRhMUpVVjJwS05HRnNiRXRaTVVwMVkyNU9lR042YkdoYVJteHNUbFpvYWxwVlNrVmpSemx6WVd4R1RWZFhhRWhOUlRSNVpHMW9jRXd6YkhkaVNFWk9ZV3hXV1ZOSFVUQmliSEJ4WkcwMWMyRnRjSFpsVkdNeVQxVmFORlp1UmxSaFIzaHdVV3RzUkV3d2FHaFZXRUp4VlZWMFMyRXpSa2RSTWpsNlZtcGFNRk41T0hobFIzUlNZVmRvVDAwemF6UlBSMDVLWlZSTmRsbFVRalpWTVhCWFpWWm9UV1JGWkU5aFZXdzFVbTEwVTFVeFpFbGtNRGxzVlhwa2RVNXFUa3hOYTNjeVVsaEplbE5FU1RCaVUzUkpWRk4wYWswemJHNWlVemw1VTIxd2NXSlhaRkJpTVdONVkxWmFObUZYZDNsalJFcHpUVVJvY1dKWFNsSmhXR1JhVlRBNVZWa3lPSHBoYTBwVlpFWk9UbE5VVW1obFZHUkVZbTFXUlZSWVVtOWhXRkpSVEROd1ZXVlZXbXRVTURWV1YxZFdkbVJzYUVoTE1XUlBaRlZhZUdKSFNYbFRWemxTVEROa1NGZHRValZUTW5SVlVtcEpNbEpyV25GVGJGWmFUVWRXY21WSFVuQlNSbkJJWkcwNU5WUlRPVFphYlZJeFREQXhiRkpJWkhsVFNGRTFWV3RvU1dWV1dUSlhWRnBYWlVWWmQxWkhjRWxYYkVKdFUxaGtNR0pzU21GWmVsWjFWREE1VGxkdFNqWlBWVlp3WlVkU1VGTlZiRTlPTW5SM1ZXeEdiMkZFUWpSVWJscHdUbTVXY2xKSE5IcGpSVVp2U3pOd1lWWlhXbGRrV0VwMlRtbHpOR05XWkdoTmJUVlpXa2RPVTJKR2NGZFJNRVoyVjIwMWRHSkZTbWhTYTFwdFVsVktTMVZ1VGxWYWJXTXpaREE1YlU1VE9YRlZlbFpaVFZkU1dsUXpaSGxpU0dSM1RESmtTR1JZUm5wVU0wSXpZa1prTUZvemFGcGplbEUwVkVkb1RWZEhXazlWU0ZKaFVtcHNlRXQ2V2paWGJIQkVWbGRaZVdONmFIRlRhbWhaVkRGRmNtVnVaRFpVVXpsMFl6QjRTRmt5VW0xaU1uUjBUSHBvVDFaSVdraGhNMlF3V2pBd2VsZHFaRlphUjNONFZWaE9TMlJYT1dwbFJuQmhZVWRXYlZkRlJqSlJlazVIVVdwQ2MxRlVSbXhoYmxwUlYwWmthVnBGY0VKTU1uaHhVMFprUmxOcmQzcFhWV2g1Vm01U1NsUnVVbnBpUkdSRVRtczVSV0pxVmxOaVJFcHdUMFJrVUdGcVJuQmpSbXh0WlZaQmNsWnRkRmRQVjBadVZtdE9XV1ZIVW05T2JHeEhaRE53YUZkRk9XRlNWMmN6V1dwYU5sWlZkSEpqVmtaVFRqQm9kR1JGU1RSUFJ6QXhUa1Z3VFZwclpEQmxSWE40VTBkV2FGSlZaRFJTTTA0MFVXcE5ORk5YVm01Tk1uUnNaRVpWZDJKNlFrcGtiRmsxWVd0MGRGUkZPVEZSTURWNFdrVm9UV1JZU2tWYVZtaFVZVVpXVjFkV1ZrSlBXR2hxVm0xV1JrNXVSa1prYTNCSVZWWnNObUpxUlhaTldFbDVaRVZhVWxScll6QmlWR1J1V2xWa2FXVkZOWE5rVlZKMllsUk9jMVpWY0d4Tk0wWlRUMVV4ZVdGNlFtOWtWbHBOVVd4b1ZHVldXa2RXYld0eVZFYzFWVk16Wkd0T1EzUjBUbGRXU0ZFelZsbFJiR3hSWTIxb1MxWnRTbE5qVldoWVZEQk9SRTlIVFRKWGJHZDNZMVZqTTBzeVNYcFNNVVpXWlVaU2FsWXhjRWRsYVRsRVQxVkdObVZZYUROVVJrbzJZbFZvUkZSV2NFMVZTRTV5WWtaYVdtVnVTa0pSTVVwWlRXdHNTR0ZYUm14a01ERm9Va2hhTTJSc1dubGlhbEpNWkVack1WVklTbkZOUkZGNVlVUk9hRk5GYkV0aWJFNUxZa1JqTUUxSGNFbFNiVzgxVGpOQ1QxUXdWa05WTTA1V1ZsWm5NMU5yWkRGUFYxRjZVa1Z3U1ZwNWRITlRWa0o1WlVSU1RsTnBPVU5pTTFaelRsaFJlRnBFVVhwVGFrRXpXbGN4VmsweU9IbGhNSEJLVWtWSk1HUXhWbGxNTVZwVFkyeFNORk13U2tWalZ6RlJaVWN4TVdGR1NrSlRSbFV4WWxaS1FsVjVPWGhpYW1oV1QxaEdRMlJWUmxwUFIwWkhWMVJLYVdWRk1XaFJNMFkxWWpCc1lWcDZaR0ZsYW1zMFlteFdNMDFyUm5oVU0yUnlaRWhrVGxGV1ZUQlphMHAxWTBWYWQxRlVUbkJsU0VaYVZHMVNkVmR1U1hsaVdGcFlVVzFXVkZRelVqTlRNRlo0VGpCd2IySlZkM1pVU0ZaRFkyMXJNVlF4YkVoWFJYaDRVa2hzZEZFelJtOVpNbVJvVW1zeFMxRnNSVFZTV0VJd1RsUlJlR0ZIV2xOU1JrcGFUVVJPVmswd1ZrVlpWVXBHVFZSc1QxWXpXakprYlVaNlZESldRbE51V2s1Wk1VWnZaRVJzZDA0eWJETmFSMVkyVkROc1VrOUhiSGxrVmxKTVUyMTBNRmxZU2xkWGJsSlpZV3RPUWxWclNucExNMEozVFd4V1ZXUnJielJoVnpsSFYwVldkMVo2V1RGVk1tTTFWMFpCTkZGWGIzbGlSMmcyV2pKNFVGSlhjREJqZWpCcFRFTktjbHBIV2xSWlYzZ3dTV3B2YVZreU9UVmpWMlF5VjBad1ZVMUZWblJaTTFKd1N6Sk9jMU5yT1RCWmEyUjZaR3hLVUZKVE9YWlRNbkJaVTFob1ZGVkhPVk5PYW1ob1VsUXdhV1pSUFQwaWZYMD0iLCJ3cmFwX3R5cGUiOiJBRVMifQ==",
+                "org.opencontainers.image.enc.pubopts": "eyJjaXBoZXIiOiJBRVNfMjU2X0NUUl9ITUFDX1NIQTI1NiIsImhtYWMiOiJ6QlBBR2dDZkFidjE4ZHIyZkE2dlJTbzBWbkp3bmFRRXFCdlh3SzR0c0FBPSIsImNpcGhlcm9wdGlvbnMiOnt9fQ=="
+            }
+        }
+    ],
+    "Env": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
+    ]
+}
+```
+
+if you now want to try running the encrypted container
+
+```bash
+$ docker run -ti registry.domain.com:5000/app:encrypted
+Unable to find image 'registry.domain.com:5000/app:encrypted' locally
+encrypted: Pulling from app
+dd5ad9c9c29f: Already exists 
+960043b8858c: Already exists 
+b4ca4c215f48: Already exists 
+eebb06941f3e: Already exists 
+02cd68c0cbf6: Already exists 
+d3c894b5b2b0: Already exists 
+b40161cd83fc: Already exists 
+46ba3f23f1d3: Already exists 
+4fa131a1b726: Already exists 
+01f38fc88b34: Already exists 
+50891eb6c2e6: Already exists 
+c4cd914051cf: Already exists 
+7c5d5f1dfb7e: Extracting [==================================================>]  4.156MB/4.156MB
+docker: failed to register layer: archive/tar: invalid tar header
+
+```
+
 #### Decrypt
 
 To decrypt via files, the ocicrypt config would look like
@@ -188,6 +333,155 @@ finally, decrypt
 skopeo copy \
   --decryption-key=provider:pqccrypt:pqc://pq?key=file://`pwd`/certs/priv-ml-kem-768-bare-seed.pem \
    docker://registry.domain.com:5000/app:encrypted docker://registry.domain.com:5000/app:decrypted
+```
+
+then inspect it:
+
+```bash
+$ skopeo inspect docker://registry.domain.com:5000/app:decrypted
+```
+
+which shows the image as
+
+
+```json
+{
+    "Name": "registry.domain.com:5000/app",
+    "Digest": "sha256:38a9ac71748dde63dbb3a530b5d3344d2274c265776f047315154c574354f796",
+    "RepoTags": [
+        "encrypted",
+        "decrypted"
+    ],
+    "Created": "2025-11-10T00:21:47.071537879-05:00",
+    "DockerVersion": "",
+    "Labels": null,
+    "Architecture": "amd64",
+    "Os": "linux",
+    "Layers": [
+        "sha256:dd5ad9c9c29f04b41a0155c720cf5ccab28ef6d353f1fe17a06c579c70054f0a",
+        "sha256:960043b8858c3c30f1d79dcc49adb2804fd35c2510729e67685b298b2ca746b7",
+        "sha256:b4ca4c215f483111b64ec6919f1659ff475d7080a649d6acd78a6ade562a4a63",
+        "sha256:eebb06941f3e57b2e40a0e9cbd798dacef9b04d89ebaa8896be5f17c976f8666",
+        "sha256:02cd68c0cbf64abe9738767877756b33f50fff5d88583fdc74b66beffa77694b",
+        "sha256:d3c894b5b2b0fa857549aeb6cbc38b038b5b2828736be37b6d9fff0b886f12fd",
+        "sha256:b40161cd83fc5d470d6abe50e87aa288481b6b89137012881d74187cfbf9f502",
+        "sha256:46ba3f23f1d3fb1440deeb279716e4377e79e61736ec2227270349b9618a0fdd",
+        "sha256:4fa131a1b726b2d6468d461e7d8867a2157d5671f712461d8abd126155fdf9ce",
+        "sha256:01f38fc88b34d9f2e43240819dd06c8b126eae8a90621c1f2bc5042fed2b010a",
+        "sha256:50891eb6c2e685b267299b99d8254e5b0f30bb7756ee2813f187a29a0a377247",
+        "sha256:c4cd914051cf67617ae54951117708987cc63ce15f1139dee59abf80c198b74e",
+        "sha256:e882969622c181cef57911adb0d8cae93a60f280ca392e8ff01a6e305a5ff1c0"
+    ],
+    "LayersData": [
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:dd5ad9c9c29f04b41a0155c720cf5ccab28ef6d353f1fe17a06c579c70054f0a",
+            "Size": 83932,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:960043b8858c3c30f1d79dcc49adb2804fd35c2510729e67685b298b2ca746b7",
+            "Size": 20322,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:b4ca4c215f483111b64ec6919f1659ff475d7080a649d6acd78a6ade562a4a63",
+            "Size": 599551,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:eebb06941f3e57b2e40a0e9cbd798dacef9b04d89ebaa8896be5f17c976f8666",
+            "Size": 284,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:02cd68c0cbf64abe9738767877756b33f50fff5d88583fdc74b66beffa77694b",
+            "Size": 188,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:d3c894b5b2b0fa857549aeb6cbc38b038b5b2828736be37b6d9fff0b886f12fd",
+            "Size": 112,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:b40161cd83fc5d470d6abe50e87aa288481b6b89137012881d74187cfbf9f502",
+            "Size": 382,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:46ba3f23f1d3fb1440deeb279716e4377e79e61736ec2227270349b9618a0fdd",
+            "Size": 345,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:4fa131a1b726b2d6468d461e7d8867a2157d5671f712461d8abd126155fdf9ce",
+            "Size": 122108,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:01f38fc88b34d9f2e43240819dd06c8b126eae8a90621c1f2bc5042fed2b010a",
+            "Size": 5209711,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:50891eb6c2e685b267299b99d8254e5b0f30bb7756ee2813f187a29a0a377247",
+            "Size": 1889065,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:c4cd914051cf67617ae54951117708987cc63ce15f1139dee59abf80c198b74e",
+            "Size": 921781,
+            "Annotations": null
+        },
+        {
+            "MIMEType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "Digest": "sha256:e882969622c181cef57911adb0d8cae93a60f280ca392e8ff01a6e305a5ff1c0",
+            "Size": 4155577,
+            "Annotations": null
+        }
+    ],
+    "Env": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
+    ]
+}
+```
+
+and now you can run it
+
+```bash
+$ docker run -ti registry.domain.com:5000/app:decrypted
+Unable to find image 'registry.domain.com:5000/app:decrypted' locally
+decrypted: Pulling from app
+dd5ad9c9c29f: Already exists 
+960043b8858c: Already exists 
+b4ca4c215f48: Already exists 
+eebb06941f3e: Already exists 
+02cd68c0cbf6: Already exists 
+d3c894b5b2b0: Already exists 
+b40161cd83fc: Already exists 
+46ba3f23f1d3: Already exists 
+4fa131a1b726: Already exists 
+01f38fc88b34: Already exists 
+50891eb6c2e6: Already exists 
+c4cd914051cf: Already exists 
+e882969622c1: Already exists 
+Digest: sha256:38a9ac71748dde63dbb3a530b5d3344d2274c265776f047315154c574354f796
+Status: Downloaded newer image for registry.domain.com:5000/app:decrypted
+
+Starting HTTP Server..
 ```
 
 ### Using KMS
@@ -334,7 +628,7 @@ set the `OCICRYPT_KEYPROVIDER_CONFIG` file to use
 ```json
 {
   "key-providers": {
-    "kmscrypt": {
+    "pqccrypt": {
     "grpc-keyprovider": {
       "grpc": "localhost:50051"
     }
@@ -371,7 +665,7 @@ the `ocicrypt.json` file will include `adc=`:
   "key-providers": {
     "pqccrypt": {
       "cmd": {
-        "path": "/tmp/kms_oci_crypt",
+        "path": "/tmp/pwc_oci_crypt",
         "args": [
           "--adc", "/path/to/service_account.json",
           "--pqcKeyURI", "pqc://pq?key=gcpkms://projects/core-eso/locations/global/keyRings/kem_kr/cryptoKeys/kem_key_1/cryptoKeyVersions/1"             
@@ -424,13 +718,13 @@ edit `example/config.toml` the stream processor to point to your config file:
     accepts = ["application/vnd.oci.image.layer.v1.tar+gzip+encrypted"]
     returns = "application/vnd.oci.image.layer.v1.tar+gzip"
     path = "/usr/local/bin/ctd-decoder"
-    env = ["OCICRYPT_KEYPROVIDER_CONFIG=/path/to/ocicrypt-kms-keyprovider/example/ocicrypt.json"]
+    env = ["OCICRYPT_KEYPROVIDER_CONFIG=/path/to/ocicrypt-pqc-keyprovider/example/ocicrypt.json"]
        
   [stream_processors."io.containerd.ocicrypt.decoder.v1.tar"]
     accepts = ["application/vnd.oci.image.layer.v1.tar+encrypted"]
     returns = "application/vnd.oci.image.layer.v1.tar"
     path = "/usr/local/bin/ctd-decoder"
-    env = ["OCICRYPT_KEYPROVIDER_CONFIG=/path/to/ocicrypt-kms-keyprovider/example/ocicrypt.json"]
+    env = ["OCICRYPT_KEYPROVIDER_CONFIG=/path/to/ocicrypt-pqc-keyprovider/example/ocicrypt.json"]
 ```
 
 now start containerd
