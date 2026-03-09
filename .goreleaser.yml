@@ -8,8 +8,7 @@ release:
   name_template: '{{.Tag}}'
   extra_files:
 builds:
-  - id: ocicrypt-tpm-keyprovider
-    main: plugin
+  - id: ocicrypt-pqc-keyprovider
     goos:
       - linux
       - darwin
@@ -55,7 +54,6 @@ signs:
       - "${signature}"
       - "--detach-sign"
       - "${artifact}"
-    
 
 env_files:
   github_token: ~/.config/goreleaser/github_token
